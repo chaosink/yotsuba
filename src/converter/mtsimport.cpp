@@ -134,7 +134,7 @@ int importMain(int argc, char **argv) {
 		return -1;
 	}
 
-	ref<Logger> log = Thread::getThread()->getLogger();
+	mitsuba::ref<Logger> log = Thread::getThread()->getLogger();
 	log->setLogLevel(logLevel);
 
 	ConsoleGeometryConverter converter;
@@ -173,7 +173,7 @@ int mts_main(int argc, char **argv) {
 
 	/* Initialize the core framework */
 	Class::staticInitialization();
-	Object::staticInitialization();
+	mitsuba::Object::staticInitialization();
 	PluginManager::staticInitialization();
 	Statistics::staticInitialization();
 	Thread::staticInitialization();
@@ -190,9 +190,9 @@ int mts_main(int argc, char **argv) {
 
 	try {
 		/* An OpenGL context may be required for the GLU tesselator */
-		ref<Session> session = Session::create();
-		ref<Device> device = Device::create(session);
-		ref<Renderer> renderer = Renderer::create(session);
+		mitsuba::ref<Session> session = Session::create();
+		mitsuba::ref<Device> device = Device::create(session);
+		mitsuba::ref<Renderer> renderer = Renderer::create(session);
 		renderer->setLogLevel(ETrace);
 		renderer->setWarnLogLevel(ETrace);
 
@@ -201,7 +201,7 @@ int mts_main(int argc, char **argv) {
 		renderer->init(device);
 
 		device->makeCurrent(renderer);
-		ref<Timer> timer = new Timer();
+		mitsuba::ref<Timer> timer = new Timer();
 
 		retval = importMain(argc, argv);
 
@@ -236,7 +236,7 @@ int mts_main(int argc, char **argv) {
 	Thread::staticShutdown();
 	Statistics::staticShutdown();
 	PluginManager::staticShutdown();
-	Object::staticShutdown();
+	mitsuba::Object::staticShutdown();
 	Class::staticShutdown();
 
 	return retval;

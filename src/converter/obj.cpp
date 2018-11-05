@@ -45,7 +45,7 @@ void referenceTexture(GeometryConverter *cvt, std::ostream &os, const std::strin
 
 		if (!fs::exists(targetPath)) {
 			if (!fs::exists(path)) {
-				ref<FileResolver> fRes = Thread::getThread()->getFileResolver();
+				mitsuba::ref<FileResolver> fRes = Thread::getThread()->getFileResolver();
 				path = fRes->resolve(path.filename());
 				if (!fs::exists(path)) {
 					SLog(EWarn, "Found neither \"%s\" nor \"%s\"!", filename.c_str(), path.string().c_str());
@@ -59,8 +59,8 @@ void referenceTexture(GeometryConverter *cvt, std::ostream &os, const std::strin
 			}
 
 			if (fs::absolute(path) != fs::absolute(targetPath)) {
-				ref<FileStream> input = new FileStream(path, FileStream::EReadOnly);
-				ref<FileStream> output = new FileStream(targetPath, FileStream::ETruncReadWrite);
+				mitsuba::ref<FileStream> input = new FileStream(path, FileStream::EReadOnly);
+				mitsuba::ref<FileStream> output = new FileStream(targetPath, FileStream::ETruncReadWrite);
 				input->copyTo(output);
 				output->close();
 				input->close();
@@ -171,7 +171,7 @@ void GeometryConverter::convertOBJ(const fs::path &inputFile,
 		if (buf == "mtllib" && m_importMaterials) {
 			std::getline(is, line);
 			std::string mtlName = trim(line.substr(1, line.length()-1));
-			ref<FileResolver> fRes = Thread::getThread()->getFileResolver()->clone();
+			mitsuba::ref<FileResolver> fRes = Thread::getThread()->getFileResolver()->clone();
 			fRes->prependPath(fs::absolute(fRes->resolve(inputFile)).parent_path());
 			fs::path fullMtlName = fRes->resolve(mtlName);
 			if (fs::exists(fullMtlName))
@@ -187,7 +187,7 @@ void GeometryConverter::convertOBJ(const fs::path &inputFile,
 	Properties objProps("obj");
 	objProps.setString("filename", inputFile.string());
 
-	ref<Shape> rootShape = static_cast<Shape *> (PluginManager::getInstance()->
+	mitsuba::ref<Shape> rootShape = static_cast<Shape *> (PluginManager::getInstance()->
 			createObject(MTS_CLASS(Shape), objProps));
 	SAssert(rootShape->isCompound());
 
@@ -201,7 +201,7 @@ void GeometryConverter::convertOBJ(const fs::path &inputFile,
 		if (!m_geometryFile) {
 			std::string filename = mesh->getName() + std::string(".serialized");
 			SLog(EInfo, "Saving \"%s\"", filename.c_str());
-			ref<FileStream> stream = new FileStream(meshesDirectory / filename, FileStream::ETruncReadWrite);
+			mitsuba::ref<FileStream> stream = new FileStream(meshesDirectory / filename, FileStream::ETruncReadWrite);
 			stream->setByteOrder(Stream::ELittleEndian);
 			mesh->serialize(stream);
 			stream->close();
