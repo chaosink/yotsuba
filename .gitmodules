@@ -1,0 +1,3 @@
+[submodule "include/aether"]
+	path = include/aether
+	url = https://github.com/chaosink/aether
