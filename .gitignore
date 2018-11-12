@@ -52,5 +52,8 @@ mitsuba.*.log
 .idea
 
 # Images
-scenes/*.png
-scenes/*.exr
+scenes/*/*.png
+scenes/*/*.exr
+
+# Test scenes
+scenes_test
