@@ -38,6 +38,8 @@ plugins += env.SharedLibrary('mymlt', ['myintegrators/mymlt.cpp', 'myintegrators
 plugins += env.SharedLibrary('mytridir', ['myintegrators/mytridir.cpp', 'myintegrators/appendkeyhole.cpp'] + common)
 plugins += env.SharedLibrary('mygpt', ['myintegrators/mygpt.cpp', 'myintegrators/poissonsolver.cpp'] + common)
 
+plugins += env.SharedLibrary('lintridir', ['myintegrators/lintridir.cpp', 'myintegrators/appendkeyhole.cpp'] + common)
+
 # Bidirectional techniques
 bidirEnv = env.Clone()
 bidirEnv.Append(LIBS=['mitsuba-bidir'])
