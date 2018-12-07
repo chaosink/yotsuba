@@ -258,17 +258,17 @@ public:
 
 
                 // Bi-directional paths
-                if (emitterSubpathSize != 1) {
-                    auto emitterSubpathSlice = reverse_(emitterSubpath.Slice(0, emitterSubpathSize));
-                    path = sensorSubpathSlice.Concat(emitterSubpathSlice);
-                } else {
-                    // Special case: we want to do specialized direct importance sampling here
-                    AppendDirectSampleEmitter(sensorSubpathSlice, uniDist, scene->getEmitters());
-                    sensorSubpathSlice.Sample();
-                    path = sensorSubpathSlice;
-                }
-                SAssert(path.Size() == pathLength + 1);
-                paths.push_back(path);
+                // if (emitterSubpathSize != 1) {
+                //     auto emitterSubpathSlice = reverse_(emitterSubpath.Slice(0, emitterSubpathSize));
+                //     path = sensorSubpathSlice.Concat(emitterSubpathSlice);
+                // } else {
+                //     // Special case: we want to do specialized direct importance sampling here
+                //     AppendDirectSampleEmitter(sensorSubpathSlice, uniDist, scene->getEmitters());
+                //     sensorSubpathSlice.Sample();
+                //     path = sensorSubpathSlice;
+                // }
+                // SAssert(path.Size() == pathLength + 1);
+                // paths.push_back(path);
             }
             estimate(scene, imageBlock, paths, time, splats, occlusionCache);
         }
@@ -325,13 +325,13 @@ public:
                 continue;
             }
 
-            pdfs.clear();
-            for (size_t j = 0; j < paths.size(); j++) {
-                double pdf = paths[j].Pdf(path);
-                pdfs.push_back(pdf);
-            }
-            double weight = misWeight(i, pdfs);
-            Spectrum weightedContribution = weight * contribution;
+            // pdfs.clear();
+            // for (size_t j = 0; j < paths.size(); j++) {
+            //     double pdf = paths[j].Pdf(path);
+            //     pdfs.push_back(pdf);
+            // }
+            // double weight = misWeight(i, pdfs);
+            Spectrum weightedContribution = /*weight **/ contribution;
             int pathLength = path.Size() - 1;
             splats.push_back(SplatElement{position, weightedContribution, pathLength, (int)i});
         }
