@@ -258,17 +258,17 @@ public:
 
 
                 // Bi-directional paths
-                if (emitterSubpathSize != 1) {
-                    auto emitterSubpathSlice = reverse_(emitterSubpath.Slice(0, emitterSubpathSize));
-                    path = sensorSubpathSlice.Concat(emitterSubpathSlice);
-                } else {
-                    // Special case: we want to do specialized direct importance sampling here
-                    AppendDirectSampleEmitter(sensorSubpathSlice, uniDist, scene->getEmitters());
-                    sensorSubpathSlice.Sample();
-                    path = sensorSubpathSlice;
-                }
-                SAssert(path.Size() == pathLength + 1);
-                paths.push_back(path);
+                // if (emitterSubpathSize != 1) {
+                //     auto emitterSubpathSlice = reverse_(emitterSubpath.Slice(0, emitterSubpathSize));
+                //     path = sensorSubpathSlice.Concat(emitterSubpathSlice);
+                // } else {
+                //     // Special case: we want to do specialized direct importance sampling here
+                //     AppendDirectSampleEmitter(sensorSubpathSlice, uniDist, scene->getEmitters());
+                //     sensorSubpathSlice.Sample();
+                //     path = sensorSubpathSlice;
+                // }
+                // SAssert(path.Size() == pathLength + 1);
+                // paths.push_back(path);
             }
             estimate(scene, imageBlock, paths, time, splats, occlusionCache);
         }
