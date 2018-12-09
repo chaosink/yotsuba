@@ -31,6 +31,52 @@ add_integrator(irrcache     misc/irrcache.cpp
                             misc/irrcache_proc.h misc/irrcache_proc.cpp)
 add_integrator(multichannel misc/multichannel.cpp)
 add_integrator(field        misc/field.cpp)
+add_integrator(motion       misc/motion.cpp)
+
+set(common
+	myintegrators/samplingutils.cpp
+	myintegrators/integrand.cpp
+	myintegrators/parallel.cpp
+	myintegrators/appendsensor.cpp
+	myintegrators/appendbsdf.cpp
+	myintegrators/appendemitter.cpp
+	myintegrators/sampleseedpaths.cpp
+	myintegrators/classification.cpp
+	myintegrators/occlusioncache.cpp)
+
+add_integrator(mydirect
+	myintegrators/mydirect.cpp
+	${common})
+add_integrator(mypath
+	myintegrators/mypath.cpp
+	${common})
+# add_integrator(myptracer
+# 	myintegrators/myptracer.cpp
+# 	${common})
+add_integrator(mybidir
+	myintegrators/mybidir.cpp
+	${common})
+add_integrator(mymlt
+	myintegrators/mymlt.cpp
+	myintegrators/bidirmutation.cpp
+	myintegrators/lensperturbation.cpp
+	myintegrators/causticsperturbation.cpp
+	myintegrators/multichainperturbation.cpp
+	myintegrators/mutation.cpp
+	${common})
+add_integrator(mytridir
+	myintegrators/mytridir.cpp
+	myintegrators/appendkeyhole.cpp
+	${common})
+add_integrator(mygpt
+	myintegrators/mygpt.cpp
+	myintegrators/poissonsolver.cpp
+	${common})
+
+add_integrator(lintridir
+	myintegrators/lintridir.cpp
+	myintegrators/appendkeyhole.cpp
+	${common})
 
 # Bidirectional techniques
 add_bidir(bdpt          bdpt/bdpt.h      bdpt/bdpt.cpp
