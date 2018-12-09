@@ -41,7 +41,7 @@ struct sample_keyhole_t {
     template <typename T>
     auto operator()(Context<T>& context, const RandomSequence<Vertex>& path, UniDist& uniDist,
                     const Raycast& raycaster, const std::vector<std::array<aether::Vector3, 3>>& tris) const {
-    
+
         // discrete_dynamic(tris) creates a symbolic discrete random variable
         // note that we uniformly sample the triangles here, which ignores the area of the triangles
         // it is possible to pass an optional weight array to discrete_dynamic to sample according to areas
@@ -65,6 +65,14 @@ struct sample_keyhole_t {
         auto z = make_random_var(u3);
         auto ab = context.Uniform2D(uniDist);
         auto dir_local = make_random_vector(x, y, z).Sample(ab[0], ab[1]);
+
+        cout << "cos = " << to_vector(dir_local.Value())[2] << endl;
+        auto a = to_vector(tri[0] - tri[1]);
+        auto b = to_vector(tri[0] - tri[2]);
+        Float area = 2.f / (a[1] * b[2] + a[2] * b[0] + a[0] * b[1] - a[0] * b[2] - a[1] * b[0] - a[2] * b[1]);
+        cout << "tri area pdf = " << area << endl;
+        cout << "portal mesh pdf = " << area / tris.size() << endl;
+        cout << to_point(keyhole_pt.Value()).toString() << endl;
 
         // transform the direction to world space
         auto e1 = v0 - v2;
