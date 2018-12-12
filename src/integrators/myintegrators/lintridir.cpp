@@ -200,17 +200,38 @@ public:
         keyholePath.Sample();
 
         for(int i = 0; i < 3; i++) {
-            aether::variable<3> u3;
-            aether::variable<4> u4;
-            auto r = sqrt(aether::one - sq(u3));
-            auto phi = two * get_pi() * u4;
+            aether::variable<0> u0;
+            aether::variable<1> u1;
+            auto r = sqrt(aether::one - sq(u0));
+            auto phi = two * get_pi() * u1;
             auto x = make_random_var(r * cos(phi));
             auto y = make_random_var(r * sin(phi));
-            auto z = make_random_var(u3);
+            auto z = make_random_var(u0);
             auto dir_local = make_random_vector(x, y, z).Sample(0.5f, 0.5f);
-            cout << "dir_local type: " << typeid(dir_local).name() << endl;
+            cout << "dir_local type:\n\t" << typeid(dir_local).name() << endl;
             cout << dir_local.Pdf() << endl;
             cout << dir_local.Pdf(Vector(0.1f, 0.1f, 0.1f)) << endl;
+
+            { // output type
+                aether::variable<0> u0;
+                aether::variable<1> u1;
+                auto r = sqrt(aether::one - sq(u0));
+                auto phi = two * get_pi() * u1;
+                auto x = r * cos(phi);
+                cout << "x type:\n\t" << typeid(x).name() << endl;
+                auto x_jac = aether::jacobian(x);
+                cout << "x_jac type:\n\t" << typeid(x_jac).name() << endl;
+                // constexpr auto x_det = abs(rcp(make_expr(determinant_tag, x_jac)));
+                // cout << "x_det type:\n\t" << typeid(x_det).name() << endl;
+
+                auto y = r * sin(phi);
+                auto z = u0;
+                auto dir = make_vector_expr(x, y, z);
+                auto dir_jac = aether::jacobian(dir);
+                cout << "dir_jac type:\n\t" << typeid(dir_jac).name() << endl;
+                // auto dir_det = abs(rcp(make_expr(determinant_tag, dir_jac)));
+                // cout << "dir_det type:\n\t" << typeid(dir_det).name() << endl;
+            }
 
             { // test
                 aether::variable<1> u1;
@@ -219,7 +240,7 @@ public:
                 auto y = make_random_var(sq(u2));
                 auto z = make_random_var(u1 * u2);
                 auto dir_local = make_random_vector(x, y, z).Sample(0.5f, 0.5f);
-                cout << "dir_local type: " << typeid(dir_local).name() << endl;
+                cout << "dir_local type:\n\t" << typeid(dir_local).name() << endl;
                 cout << dir_local.Pdf() << endl;
                 cout << dir_local.Pdf(Vector(0.1f, 0.1f, 0.1f)) << endl;
             }

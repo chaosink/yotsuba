@@ -104,8 +104,8 @@ struct sample_keyhole_t {
             to_point(sample1.Value()),
             to_point(keyhole_pt.Value())
         ) << endl;
-        cout << "sample0 type: " << typeid(sample0).name() << endl;
-        cout << "sample1 type: " << typeid(sample1).name() << endl;
+        cout << "sample0 type:\n\t" << typeid(sample0).name() << endl;
+        cout << "sample1 type:\n\t" << typeid(sample1).name() << endl;
 
         // sample_tuple combines the two path vertices
         return sample_tuple(sample0, sample1);
