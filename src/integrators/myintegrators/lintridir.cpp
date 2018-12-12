@@ -171,16 +171,16 @@ public:
         // keyhole_tris.push_back({{tri2_v0, tri2_v1, tri2_v2}});
 
         // Top of opening
-        // aether::Vector3 tri3_v0{121.9446, 123.3378, -73.0101};
-        // aether::Vector3 tri3_v1{62.1593, 121.5088, -74.4293};
-        // aether::Vector3 tri3_v2{119.1694, 121.5088, -56.649};
-        // keyhole_tris.push_back({{tri3_v0, tri3_v1, tri3_v2}});
+        aether::Vector3 tri3_v0{121.9446, 123.3378, -73.0101};
+        aether::Vector3 tri3_v1{62.1593, 121.5088, -74.4293};
+        aether::Vector3 tri3_v2{119.1694, 121.5088, -56.649};
+        keyhole_tris.push_back({{tri3_v0, tri3_v1, tri3_v2}});
 
         // // Back of door
-        aether::Vector3 tri4_v0{121.9446, 123.3378, -77.0547};
-        aether::Vector3 tri4_v1{58.7111, 123.3378, -77.0547};
-        aether::Vector3 tri4_v2{58.7111, 0, -77.0547};
-        keyhole_tris.push_back({{tri4_v0, tri4_v1, tri4_v2}});
+        // aether::Vector3 tri4_v0{121.9446, 123.3378, -77.0547};
+        // aether::Vector3 tri4_v1{58.7111, 123.3378, -77.0547};
+        // aether::Vector3 tri4_v2{58.7111, 0, -77.0547};
+        // keyhole_tris.push_back({{tri4_v0, tri4_v1, tri4_v2}});
 
         // aether::Vector3 tri5_v0{121.9446, 123.3378, -77.0547};
         // aether::Vector3 tri5_v1{58.7111, 0, -77.0547 };
@@ -198,6 +198,32 @@ public:
         RandomSequence<Vertex> keyholePath;
         AppendKeyhole(keyholePath, uniDist, *m_raycaster, keyhole_tris);
         keyholePath.Sample();
+
+        for(int i = 0; i < 3; i++) {
+            aether::variable<3> u3;
+            aether::variable<4> u4;
+            auto r = sqrt(aether::one - sq(u3));
+            auto phi = two * get_pi() * u4;
+            auto x = make_random_var(r * cos(phi));
+            auto y = make_random_var(r * sin(phi));
+            auto z = make_random_var(u3);
+            auto dir_local = make_random_vector(x, y, z).Sample(0.5f, 0.5f);
+            cout << "dir_local type: " << typeid(dir_local).name() << endl;
+            cout << dir_local.Pdf() << endl;
+            cout << dir_local.Pdf(Vector(0.1f, 0.1f, 0.1f)) << endl;
+
+            { // test
+                aether::variable<1> u1;
+                aether::variable<2> u2;
+                auto x = make_random_var(sin(u1));
+                auto y = make_random_var(sq(u2));
+                auto z = make_random_var(u1 * u2);
+                auto dir_local = make_random_vector(x, y, z).Sample(0.5f, 0.5f);
+                cout << "dir_local type: " << typeid(dir_local).name() << endl;
+                cout << dir_local.Pdf() << endl;
+                cout << dir_local.Pdf(Vector(0.1f, 0.1f, 0.1f)) << endl;
+            }
+        }
 
         while(1) {
             RandomSequence<Vertex> keyholePath;

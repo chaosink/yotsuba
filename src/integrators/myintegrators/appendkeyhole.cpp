@@ -16,6 +16,9 @@ auto intersect(Context<T> &context, const Raycast &raycaster,
     auto its_v0 = to_vector3(its.triangle_v0);
     auto its_v1 = to_vector3(its.triangle_v1);
     auto its_v2 = to_vector3(its.triangle_v2);
+    cout << "Vector3f t" << N << "v0{" << to_vector(its_v0).toString().substr(1) << "\b};" << endl;
+    cout << "Vector3f t" << N << "v1{" << to_vector(its_v1).toString().substr(1) << "\b};" << endl;
+    cout << "Vector3f t" << N << "v2{" << to_vector(its_v2).toString().substr(1) << "\b};" << endl;
     auto sph_center = to_vector3(its.sph_center);
     auto sph_radius = aether::Real(its.sph_radius);
     auto pt = intersect_triangle<N>(its_v0, its_v1, its_v2, org, dir);
@@ -55,6 +58,9 @@ struct sample_keyhole_t {
         auto v2 = constant(tri[2]);
         auto uv = context.Uniform2D(uniDist);
         auto keyhole_pt = uniform_triangle(v0, v1, v2).Sample(uv[0], uv[1]);
+        // cout << "Vector3f tv0{" << to_point(tri[0]).toString().substr(1) << "\b};" << endl;
+        // cout << "Vector3f tv1{" << to_point(tri[1]).toString().substr(1) << "\b};" << endl;
+        // cout << "Vector3f tv2{" << to_point(tri[2]).toString().substr(1) << "\b};" << endl;
 
         // sample a direction wi on a unit sphere
         // note that we need to use a new set of uniforms (u3, u4)
@@ -69,10 +75,11 @@ struct sample_keyhole_t {
         cout << "cos = " << to_vector(dir_local.Value())[2] << endl;
         auto a = to_vector(tri[0] - tri[1]);
         auto b = to_vector(tri[0] - tri[2]);
-        Float area = 2.f / (a[1] * b[2] + a[2] * b[0] + a[0] * b[1] - a[0] * b[2] - a[1] * b[0] - a[2] * b[1]);
-        cout << "tri area pdf = " << area << endl;
-        cout << "portal mesh pdf = " << area / tris.size() << endl;
-        cout << to_point(keyhole_pt.Value()).toString() << endl;
+        Float area_pdf = 2.f / (a[1] * b[2] + a[2] * b[0] + a[0] * b[1] - a[0] * b[2] - a[1] * b[0] - a[2] * b[1]);
+        cout << "tri area pdf = " << area_pdf << endl;
+        cout << "portal mesh pdf = " << area_pdf / tris.size() << endl;
+        cout << endl;
+        cout << "Vector3f p{" << to_point(keyhole_pt.Value()).toString().substr(1) << "\b};" << endl;
 
         // transform the direction to world space
         auto e1 = v0 - v2;
@@ -80,12 +87,25 @@ struct sample_keyhole_t {
         auto N = normalize(cross(e1, e2));
         auto basis = coordinate_basis(N);
         auto dir_world = basis * dir_local;
+        cout << "Vector3f d{" << to_vector(dir_world.Value()).toString().substr(1) << "\b};" << endl;
 
         Float time = context.Uniform1D(uniDist);
 
         // intersect the two sides of the direction with the scene
         auto sample0 = intersect<0>(context, raycaster, keyhole_pt,  dir_world, time);
         auto sample1 = intersect<1>(context, raycaster, keyhole_pt, -dir_world, time);
+        cout << endl;
+        cout << "COS = " << dot(to_vector(N.Value()), to_vector(dir_world.Value())) << endl;
+        cout << "t0 = " << distanceSquared(
+            to_point(sample0.Value()),
+            to_point(keyhole_pt.Value())
+        ) << endl;
+        cout << "t1 = " << distanceSquared(
+            to_point(sample1.Value()),
+            to_point(keyhole_pt.Value())
+        ) << endl;
+        cout << "sample0 type: " << typeid(sample0).name() << endl;
+        cout << "sample1 type: " << typeid(sample1).name() << endl;
 
         // sample_tuple combines the two path vertices
         return sample_tuple(sample0, sample1);
