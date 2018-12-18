@@ -158,35 +158,33 @@ public:
         //aether::Vector3 tri2_v1{ 0.153878, 1.990000, -0.189689};
         //aether::Vector3 tri2_v2{ 0.153878, 1.990000, 0.139690};
 
-
+        std::vector<std::array<aether::Vector3, 3>> keyhole_tris;
         // veach_door
         aether::Vector3 tri1_v0{121.9446, 0, -73.0101};
         aether::Vector3 tri1_v1{119.1694, 121.5088, -56.649};
         aether::Vector3 tri1_v2{119.1694, 0.5088, -56.649};
+        keyhole_tris.push_back({{tri1_v0, tri1_v1, tri1_v2}});
 
         aether::Vector3 tri2_v0{121.9446, 0, -73.0101};
         aether::Vector3 tri2_v1{121.9446, 123.3378, -73.0101};
         aether::Vector3 tri2_v2{119.1694, 121.5088, -56.649};
+        keyhole_tris.push_back({{tri2_v0, tri2_v1, tri2_v2}});
 
         // Top of opening
         aether::Vector3 tri3_v0{121.9446, 123.3378, -73.0101};
         aether::Vector3 tri3_v1{62.1593, 121.5088, -74.4293};
         aether::Vector3 tri3_v2{119.1694, 121.5088, -56.649};
+        keyhole_tris.push_back({{tri3_v0, tri3_v1, tri3_v2}});
 
         // Back of door
         aether::Vector3 tri4_v0{121.9446, 123.3378, -77.0547};
         aether::Vector3 tri4_v1{58.7111, 123.3378, -77.0547};
         aether::Vector3 tri4_v2{58.7111, 0, -77.0547};
+        keyhole_tris.push_back({{tri4_v0, tri4_v1, tri4_v2}});
 
         aether::Vector3 tri5_v0{121.9446, 123.3378, -77.0547};
         aether::Vector3 tri5_v1{58.7111, 0, -77.0547 };
         aether::Vector3 tri5_v2{121.9446, 0, -77.0547};
-
-        std::vector<std::array<aether::Vector3, 3>> keyhole_tris;
-        keyhole_tris.push_back({{tri1_v0, tri1_v1, tri1_v2}});
-        keyhole_tris.push_back({{tri2_v0, tri2_v1, tri2_v2}});
-        keyhole_tris.push_back({{tri3_v0, tri3_v1, tri3_v2}});
-        keyhole_tris.push_back({{tri4_v0, tri4_v1, tri4_v2}});
         keyhole_tris.push_back({{tri5_v0, tri5_v1, tri5_v2}});
 
         RandomSequence<Vertex> keyholePath;
@@ -229,6 +227,7 @@ public:
         std::vector<SplatElement> splats;
         for (int pathLength = 2; pathLength <= m_maxDepth; pathLength++) {
             std::vector<RandomSequence<Vertex>> paths;
+            std::vector<bool> isPortalEdge;
             for (int sensorSubpathSize = 1; sensorSubpathSize <= pathLength + 1; sensorSubpathSize++) {
                 const int emitterSubpathSize = pathLength + 1 - sensorSubpathSize;
                 auto sensorSubpathSlice = sensorSubpath.Slice(0, sensorSubpathSize);
@@ -241,6 +240,7 @@ public:
                     auto sensorTriDirSubpathSlice = sensorSubpath.Slice(0, sensorSubpathSize - 1);
                     auto emitterTriDirSubpathSlice = reverse_(emitterSubpath.Slice(0, emitterSubpathSize - 1));
                     paths.push_back(sensorTriDirSubpathSlice.Concat(keyholePath).Concat(emitterTriDirSubpathSlice));
+                    isPortalEdge.push_back(true);
                 }
 
                 // // - Shorten the sensor subpaths by 2
@@ -258,19 +258,20 @@ public:
 
 
                 // Bi-directional paths
-                // if (emitterSubpathSize != 1) {
-                //     auto emitterSubpathSlice = reverse_(emitterSubpath.Slice(0, emitterSubpathSize));
-                //     path = sensorSubpathSlice.Concat(emitterSubpathSlice);
-                // } else {
-                //     // Special case: we want to do specialized direct importance sampling here
-                //     AppendDirectSampleEmitter(sensorSubpathSlice, uniDist, scene->getEmitters());
-                //     sensorSubpathSlice.Sample();
-                //     path = sensorSubpathSlice;
-                // }
-                // SAssert(path.Size() == pathLength + 1);
-                // paths.push_back(path);
+                if (emitterSubpathSize != 1) {
+                    auto emitterSubpathSlice = reverse_(emitterSubpath.Slice(0, emitterSubpathSize));
+                    path = sensorSubpathSlice.Concat(emitterSubpathSlice);
+                } else {
+                    // Special case: we want to do specialized direct importance sampling here
+                    AppendDirectSampleEmitter(sensorSubpathSlice, uniDist, scene->getEmitters());
+                    sensorSubpathSlice.Sample();
+                    path = sensorSubpathSlice;
+                }
+                SAssert(path.Size() == pathLength + 1);
+                paths.push_back(path);
+                isPortalEdge.push_back(false);
             }
-            estimate(scene, imageBlock, paths, time, splats, occlusionCache);
+            estimate(scene, imageBlock, paths, isPortalEdge, time, splats, occlusionCache);
         }
 
         std::lock_guard<std::mutex> lock(mutex);
@@ -296,11 +297,14 @@ public:
     void estimate(const Scene *scene,
                   ImageBlock *imageBlock,
                   const std::vector<RandomSequence<Vertex>> &paths,
+                  const std::vector<bool> &isPortalEdge,
                   const Float time,
                   std::vector<SplatElement> &splats,
                   OcclusionCache& occlusionCache) const {
         std::vector<double> pdfs;
         for (size_t i = 0; i < paths.size(); i++) {
+            if (!isPortalEdge[i]) continue;
+
             const RandomSequence<Vertex> &path = paths[i];
             if (!path.AllValid()) {
                 continue;
