@@ -30,13 +30,13 @@ common = ['myintegrators/samplingutils.cpp',
 			'myintegrators/classification.cpp',
 			'myintegrators/occlusioncache.cpp',]
 
-plugins += env.SharedLibrary('mydirect', ['myintegrators/mydirect.cpp'] + common)
-plugins += env.SharedLibrary('mypath', ['myintegrators/mypath.cpp'] + common)
-#plugins += env.SharedLibrary('myptracer', ['myintegrators/myptracer.cpp'] + common)
-plugins += env.SharedLibrary('mybidir', ['myintegrators/mybidir.cpp'] + common)
-plugins += env.SharedLibrary('mymlt', ['myintegrators/mymlt.cpp', 'myintegrators/bidirmutation.cpp', 'myintegrators/lensperturbation.cpp', 'myintegrators/causticsperturbation.cpp', 'myintegrators/multichainperturbation.cpp', 'myintegrators/mutation.cpp'] + common)
-plugins += env.SharedLibrary('mytridir', ['myintegrators/mytridir.cpp', 'myintegrators/appendkeyhole.cpp'] + common)
-plugins += env.SharedLibrary('mygpt', ['myintegrators/mygpt.cpp', 'myintegrators/poissonsolver.cpp'] + common)
+# plugins += env.SharedLibrary('mydirect', ['myintegrators/mydirect.cpp'] + common)
+# plugins += env.SharedLibrary('mypath', ['myintegrators/mypath.cpp'] + common)
+# #plugins += env.SharedLibrary('myptracer', ['myintegrators/myptracer.cpp'] + common)
+# plugins += env.SharedLibrary('mybidir', ['myintegrators/mybidir.cpp'] + common)
+# plugins += env.SharedLibrary('mymlt', ['myintegrators/mymlt.cpp', 'myintegrators/bidirmutation.cpp', 'myintegrators/lensperturbation.cpp', 'myintegrators/causticsperturbation.cpp', 'myintegrators/multichainperturbation.cpp', 'myintegrators/mutation.cpp'] + common)
+# plugins += env.SharedLibrary('mytridir', ['myintegrators/mytridir.cpp', 'myintegrators/appendkeyhole.cpp'] + common)
+# plugins += env.SharedLibrary('mygpt', ['myintegrators/mygpt.cpp', 'myintegrators/poissonsolver.cpp'] + common)
 
 plugins += env.SharedLibrary('lintridir', ['myintegrators/lintridir.cpp', 'myintegrators/appendkeyhole.cpp'] + common)
 

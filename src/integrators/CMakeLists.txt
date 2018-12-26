@@ -44,34 +44,34 @@ set(common
 	myintegrators/classification.cpp
 	myintegrators/occlusioncache.cpp)
 
-add_integrator(mydirect
-	myintegrators/mydirect.cpp
-	${common})
-add_integrator(mypath
-	myintegrators/mypath.cpp
-	${common})
-# add_integrator(myptracer
-# 	myintegrators/myptracer.cpp
-# 	${common})
-add_integrator(mybidir
-	myintegrators/mybidir.cpp
-	${common})
-add_integrator(mymlt
-	myintegrators/mymlt.cpp
-	myintegrators/bidirmutation.cpp
-	myintegrators/lensperturbation.cpp
-	myintegrators/causticsperturbation.cpp
-	myintegrators/multichainperturbation.cpp
-	myintegrators/mutation.cpp
-	${common})
-add_integrator(mytridir
-	myintegrators/mytridir.cpp
-	myintegrators/appendkeyhole.cpp
-	${common})
-add_integrator(mygpt
-	myintegrators/mygpt.cpp
-	myintegrators/poissonsolver.cpp
-	${common})
+#add_integrator(mydirect
+#	myintegrators/mydirect.cpp
+#	${common})
+#add_integrator(mypath
+#	myintegrators/mypath.cpp
+#	${common})
+## add_integrator(myptracer
+## 	myintegrators/myptracer.cpp
+## 	${common})
+#add_integrator(mybidir
+#	myintegrators/mybidir.cpp
+#	${common})
+#add_integrator(mymlt
+#	myintegrators/mymlt.cpp
+#	myintegrators/bidirmutation.cpp
+#	myintegrators/lensperturbation.cpp
+#	myintegrators/causticsperturbation.cpp
+#	myintegrators/multichainperturbation.cpp
+#	myintegrators/mutation.cpp
+#	${common})
+#add_integrator(mytridir
+#	myintegrators/mytridir.cpp
+#	myintegrators/appendkeyhole.cpp
+#	${common})
+#add_integrator(mygpt
+#	myintegrators/mygpt.cpp
+#	myintegrators/poissonsolver.cpp
+#	${common})
 
 add_integrator(lintridir
 	myintegrators/lintridir.cpp
