@@ -160,32 +160,45 @@ public:
 
         std::vector<std::array<aether::Vector3, 3>> keyhole_tris;
         // veach_door
-        aether::Vector3 tri1_v0{121.9446, 0, -73.0101};
-        aether::Vector3 tri1_v1{119.1694, 121.5088, -56.649};
-        aether::Vector3 tri1_v2{119.1694, 0.5088, -56.649};
-        keyhole_tris.push_back({{tri1_v0, tri1_v1, tri1_v2}});
+        // aether::Vector3 tri1_v0{121.9446, 0, -73.0101};
+        // aether::Vector3 tri1_v1{119.1694, 121.5088, -56.649};
+        // aether::Vector3 tri1_v2{119.1694, 0.5088, -56.649};
+        // keyhole_tris.push_back({{tri1_v0, tri1_v1, tri1_v2}});
 
-        aether::Vector3 tri2_v0{121.9446, 0, -73.0101};
-        aether::Vector3 tri2_v1{121.9446, 123.3378, -73.0101};
-        aether::Vector3 tri2_v2{119.1694, 121.5088, -56.649};
-        keyhole_tris.push_back({{tri2_v0, tri2_v1, tri2_v2}});
+        // aether::Vector3 tri2_v0{121.9446, 0, -73.0101};
+        // aether::Vector3 tri2_v1{121.9446, 123.3378, -73.0101};
+        // aether::Vector3 tri2_v2{119.1694, 121.5088, -56.649};
+        // keyhole_tris.push_back({{tri2_v0, tri2_v1, tri2_v2}});
 
-        // Top of opening
+        // // Top of opening
         aether::Vector3 tri3_v0{121.9446, 123.3378, -73.0101};
         aether::Vector3 tri3_v1{62.1593, 121.5088, -74.4293};
         aether::Vector3 tri3_v2{119.1694, 121.5088, -56.649};
         keyhole_tris.push_back({{tri3_v0, tri3_v1, tri3_v2}});
 
-        // Back of door
-        aether::Vector3 tri4_v0{121.9446, 123.3378, -77.0547};
-        aether::Vector3 tri4_v1{58.7111, 123.3378, -77.0547};
-        aether::Vector3 tri4_v2{58.7111, 0, -77.0547};
-        keyhole_tris.push_back({{tri4_v0, tri4_v1, tri4_v2}});
+        // // Back of door
+        // aether::Vector3 tri4_v0{121.9446, 123.3378, -77.0547};
+        // aether::Vector3 tri4_v1{58.7111, 123.3378, -77.0547};
+        // aether::Vector3 tri4_v2{58.7111, 0, -77.0547};
+        // keyhole_tris.push_back({{tri4_v0, tri4_v1, tri4_v2}});
 
-        aether::Vector3 tri5_v0{121.9446, 123.3378, -77.0547};
-        aether::Vector3 tri5_v1{58.7111, 0, -77.0547 };
-        aether::Vector3 tri5_v2{121.9446, 0, -77.0547};
-        keyhole_tris.push_back({{tri5_v0, tri5_v1, tri5_v2}});
+        // aether::Vector3 tri5_v0{121.9446, 123.3378, -77.0547};
+        // aether::Vector3 tri5_v1{58.7111, 0, -77.0547 };
+        // aether::Vector3 tri5_v2{121.9446, 0, -77.0547};
+        // keyhole_tris.push_back({{tri5_v0, tri5_v1, tri5_v2}});
+
+        // Tunnel scene portal mesh
+        // aether::Vector3 tri0_v0{0.350000, -0.005000, -0.495000};
+        // aether::Vector3 tri0_v1{0.350000, -0.005000, -0.505000};
+        // aether::Vector3 tri0_v2{0.350000, 0.005000, -0.505000};
+        // keyhole_tris.push_back({{tri0_v0, tri0_v1, tri0_v2}});
+
+        // aether::Vector3 tri1_v0{0.350000, -0.005000, -0.495000};
+        // aether::Vector3 tri1_v1{0.350000, 0.005000, -0.505000};
+        // aether::Vector3 tri1_v2{0.350000, 0.005000, -0.495000};
+        // keyhole_tris.push_back({{tri1_v0, tri1_v1, tri1_v2}});
+
+
 
         RandomSequence<Vertex> keyholePath;
         AppendKeyhole(keyholePath, uniDist, *m_raycaster, keyhole_tris);
@@ -226,6 +239,7 @@ public:
         // Combine
         std::vector<SplatElement> splats;
         for (int pathLength = 2; pathLength <= m_maxDepth; pathLength++) {
+            if(pathLength != 4) continue;
             std::vector<RandomSequence<Vertex>> paths;
             std::vector<bool> isPortalEdge;
             for (int sensorSubpathSize = 1; sensorSubpathSize <= pathLength + 1; sensorSubpathSize++) {
@@ -294,6 +308,23 @@ public:
         }
     }
 
+    void exportPath(const RandomSequence<Vertex> &path) const {
+        std::ofstream ofs("/tmp/tdpt_path.obj");
+        int k = 0;
+        auto exportSegment = [&](const Vertex &v0, const Vertex &v1) {
+            const Point3 p0 = to_point(v0.Value());
+            const Point3 p1 = to_point(v1.Value());
+            ofs << "v " << p0.x << " " << -p0.z << " " << p0.y << endl;
+            ofs << "v " << p0.x << " " << -p0.z << " " << p0.y << endl;
+            ofs << "v " << p1.x << " " << -p1.z << " " << p1.y << endl;
+            ofs << "f " << k * 3 + 1 << " " << k * 3 + 2 << " " << k * 3 + 3 << endl;
+            k++;
+        };
+
+        for(int i = 0; i < path.Size() - 1; i++)
+            exportSegment(path[i], path[i + 1]);
+    }
+
     void estimate(const Scene *scene,
                   ImageBlock *imageBlock,
                   const std::vector<RandomSequence<Vertex>> &paths,
@@ -302,6 +333,12 @@ public:
                   std::vector<SplatElement> &splats,
                   OcclusionCache& occlusionCache) const {
         std::vector<double> pdfs;
+        bool hasPortalEdge = false;
+        for(const auto& is: isPortalEdge)
+            if(is) {
+                hasPortalEdge = true;
+                break;
+            }
         for (size_t i = 0; i < paths.size(); i++) {
             if (!isPortalEdge[i]) continue;
 
@@ -330,14 +367,55 @@ public:
             }
 
             pdfs.clear();
+            #if !defined NDEBUG
+            cout << endl;
+            #endif
             for (size_t j = 0; j < paths.size(); j++) {
                 double pdf = paths[j].Pdf(path);
                 pdfs.push_back(pdf);
             }
             double weight = misWeight(i, pdfs);
+            contribution = Spectrum(1.f);
             Spectrum weightedContribution = weight * contribution;
             int pathLength = path.Size() - 1;
             splats.push_back(SplatElement{position, weightedContribution, pathLength, (int)i});
+
+            #if !defined NDEBUG
+            if(hasPortalEdge) {
+                const size_t index = i;
+                double mi;
+                const double sq_numerator = pdfs[index];
+                if (sq_numerator <= 0. || !std::isfinite(sq_numerator)) {
+                    // This shouldn't happen though
+                    mi = 0.;
+                }
+                double denominator = 0.0;
+                for (size_t i = 0; i < pdfs.size(); i++) {
+                    if (isPortalEdge[i] || pdfs[i] <= 0. || !std::isfinite(pdfs[i])) {
+                        continue;
+                    }
+                    double ratio = pdfs[i] / sq_numerator;
+                    denominator += (ratio * ratio);
+                }
+                SAssert(denominator >= 0.);
+                mi = 1.0 / denominator;
+                if(mi != weight) {
+                    exportPath(path);
+                    cout << "pathLength: " << pathLength << endl;
+                    cout << "index: " << index << endl;
+                    cout << "BDPT MIS: " << mi << endl;
+                    cout << "TDPT MIS: " << weight << endl;
+                    for (size_t i = 0; i < pdfs.size(); i++) {
+                        if(isPortalEdge[i] && pdfs[i] > 0. && std::isfinite(pdfs[i])) {
+                            double ratio = pdfs[i] / sq_numerator;
+                            printf("%16g", ratio);
+                        }
+                    }
+                    cout << endl;
+                    cout << endl;
+                }
+            }
+            #endif
         }
     }
 
